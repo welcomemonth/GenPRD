@@ -17,7 +17,7 @@ import { IfAuthenticatedDirective } from "../../../../core/auth/if-authenticated
 import { Clipboard, ClipboardModule } from "@angular/cdk/clipboard";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { MarkdownPipe } from "src/app/shared/pipes/markdown.pipe";
-
+import { MarkdownComponent, MermaidAPI } from "ngx-markdown";
 @Component({
   selector: "app-home-page",
   templateUrl: "./home.component.html",
@@ -25,6 +25,7 @@ import { MarkdownPipe } from "src/app/shared/pipes/markdown.pipe";
   imports: [
     NgClass,
     ArticleListComponent,
+    MarkdownComponent,
     ClipboardModule,
     AsyncPipe,
     RxLet,
@@ -86,6 +87,19 @@ graph TD
     private readonly clipboard: Clipboard,
     private readonly userService: UserService,
   ) {}
+
+  mermaidMarkdown =
+`\`\`\`mermaid
+graph TD;
+  A-->B;
+  A-->C;
+  B-->D;
+  C-->D;
+\`\`\``;
+  mermaidOptions: MermaidAPI.Config = {
+    fontFamily: 'inherit',
+    theme: MermaidAPI.Theme.Dark,
+  };
 
   ngOnInit(): void {
     this.userService.isAuthenticated

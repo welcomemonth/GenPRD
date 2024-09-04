@@ -90,7 +90,7 @@
         <!-- 第三个内容块 -->
         <div class="bg-white p-4 rounded shadow-md">
           <h3 class="text-lg font-semibold mb-2">系统流程图</h3>
-          <p>这里是系统流程图的描述。</p>
+          <markdown [data]="mermaidMarkdown" mermaid [mermaidOptions]="mermaidOptions" fxFlex.gt-sm="calc(50% - 8px)"></markdown>
         </div>
 
         <!-- 其他内容块 -->

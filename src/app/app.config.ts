@@ -9,6 +9,7 @@ import { apiInterceptor } from "./core/interceptors/api.interceptor";
 import { tokenInterceptor } from "./core/interceptors/token.interceptor";
 import { errorInterceptor } from "./core/interceptors/error.interceptor";
 import { EMPTY } from "rxjs";
+import { provideMarkdown } from "ngx-markdown";
 import { provideAnimationsAsync } from "@angular/platform-browser/animations/async";
 
 export function initAuth(jwtService: JwtService, userService: UserService) {
@@ -18,6 +19,7 @@ export function initAuth(jwtService: JwtService, userService: UserService) {
 export const appConfig: ApplicationConfig = {
   providers: [
     provideRouter(routes),
+    provideMarkdown(),
     provideHttpClient(
       withInterceptors([apiInterceptor, tokenInterceptor, errorInterceptor]),
     ),
