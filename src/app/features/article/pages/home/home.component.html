@@ -1,0 +1,106 @@
+<div class="home-page">
+  <div class="flex h-screen">
+    <!-- 左侧需求输入区域 -->
+    <div class="w-1/4 bg-gray-200 p-4 flex flex-col space-y-4">
+      <!-- 标题输入框 -->
+      <div>
+        <label for="title" class="block text-lg font-semibold mb-2">标题</label>
+        <input
+          id="title"
+          type="text"
+          class="w-full p-2 border border-gray-300 rounded"
+          placeholder="输入标题..."
+        />
+      </div>
+
+      <!-- 详细描述输入框 -->
+      <div>
+        <label for="description" class="block text-lg font-semibold mb-2"
+          >详细描述</label
+        >
+        <textarea
+          id="description"
+          class="w-full p-2 border border-gray-300 rounded resize-none"
+          placeholder="输入详细描述..."
+        ></textarea>
+      </div>
+
+      <!-- 勾选选项 -->
+      <div>
+        <label class="block text-lg font-semibold mb-2">选择内容</label>
+        <div class="space-y-2">
+          <label class="inline-flex items-center">
+            <input type="checkbox" value="需求细化" class="form-checkbox" />
+            <span class="ml-2">需求细化</span>
+          </label>
+          <label class="inline-flex items-center">
+            <input type="checkbox" value="页面结构图" class="form-checkbox" />
+            <span class="ml-2">页面结构图</span>
+          </label>
+          <label class="inline-flex items-center">
+            <input type="checkbox" value="系统流程图" class="form-checkbox" />
+            <span class="ml-2">系统流程图</span>
+          </label>
+          <label class="inline-flex items-center">
+            <input type="checkbox" value="其他内容" class="form-checkbox" />
+            <span class="ml-2">其他内容</span>
+          </label>
+        </div>
+        <!-- 生成文档按钮 -->
+        <button
+          (click)="generateDocument()"
+          class="mt-4 bg-blue-500 text-white px-4 py-2 rounded"
+        >
+          生成文档
+        </button>
+      </div>
+    </div>
+
+    <!-- 右侧内容区域 -->
+    <div class="w-3/4 bg-gray-100 p-4 overflow-auto">
+      <div class="space-y-4">
+        <div class="bg-white p-4 rounded shadow-md relative">
+          <button
+            (click)="copyToClipboard(markdownContent)"
+            class="absolute top-2 right-2 bg-blue-500 text-white px-2 py-1 rounded"
+          >
+            复制
+          </button>
+          <button
+            (click)="regenerateContent()"
+            class="absolute top-2 right-16 bg-green-500 text-white px-2 py-1 rounded"
+          >
+            重新生成
+          </button>
+          <h3 class="text-lg font-semibold mb-2">PRD内容</h3>
+          <div
+            class="markdown-body"
+            [innerHTML]="markdownContent | markdown | async"
+          ></div>
+        </div>
+        <!-- 第二个内容块 -->
+        <div class="bg-white p-4 rounded shadow-md">
+          <h3 class="text-lg font-semibold mb-2">页面结构图</h3>
+          <div
+            class="markdown-body"
+            [innerHTML]="structure | markdown | async"
+          ></div>
+        </div>
+
+        <!-- 第三个内容块 -->
+        <div class="bg-white p-4 rounded shadow-md">
+          <h3 class="text-lg font-semibold mb-2">系统流程图</h3>
+          <p>这里是系统流程图的描述。</p>
+        </div>
+
+        <!-- 其他内容块 -->
+        <div class="bg-white p-4 rounded shadow-md">
+          <h3 class="text-lg font-semibold mb-2">其他内容</h3>
+          <p>这里是其他内容的描述。</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- </div> -->
+</div>
