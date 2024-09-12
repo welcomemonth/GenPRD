@@ -144,6 +144,15 @@ graph TD;
   }
 
   generateDocument() {
+    // 调用 create_prd 方法
+    this.prdService.create_prd().subscribe({
+      next: (response) => {
+        console.log('创建成功:', response);
+      },
+      error: (error) => {
+        console.error('创建失败:', error);
+      }
+    });
     console.log("文档生成");
   }
 }
