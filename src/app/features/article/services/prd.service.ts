@@ -9,8 +9,18 @@ export class PrdService {
 
   create_prd(): Observable<string> {
     return this.http
-      .post<string>("/prd", { title: "test", detail: "test" })
-      .pipe(map((data) => data));
+      //.post<string>("/prd", { title: "test", detail: "test" })
+      .post<string>("/chat", 
+        {
+          "messages": [
+            {
+              "content": "string",
+              "role": "user"
+            }
+          ],
+          "stream": true
+        })
+      .pipe(map((data) => data),);
   }
 
 
