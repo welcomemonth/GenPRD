@@ -1,16 +1,16 @@
 import { Injectable } from "@angular/core";
-import { Observable } from "rxjs";
-import { map } from "rxjs/operators";
-import { HttpClient } from "@angular/common/http";
+import { Observable, from, of } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
+import { HttpClient, HttpEvent, HttpEventType, HttpHeaders } from "@angular/common/http";
 
 @Injectable({ providedIn: "root" })
 export class PrdService {
   constructor(private readonly http: HttpClient) {}
 
-  create_prd(): Observable<string> {
+  create_prd(): Observable<any> {
     return this.http
       //.post<string>("/prd", { title: "test", detail: "test" })
-      .post<string>("/chat", 
+      .post<any>("/chat", 
         {
           "messages": [
             {
@@ -18,10 +18,35 @@ export class PrdService {
               "role": "user"
             }
           ],
-          "stream": true
+          "stream": false
         })
       .pipe(map((data) => data),);
   }
 
-
+  /*create_prd(): Observable<any> {
+    return this.http.post<any>("/chat", {
+      "messages": [
+        {
+          "content": "string",
+          "role": "user"
+        }
+      ],
+      "stream": true
+    }, { 
+    observe: 'events',
+    responseType: 'json' }).pipe(
+      map(event => {
+        if (event.type === HttpEventType.Response) {
+          // 解析流式 JSON 数据
+          const reader = new FileReader();
+          reader.onload = () => {
+            const json = JSON.parse(reader.result as string);
+            console.log('Streamed JSON:', json);
+          };
+          reader.readAsText(new Blob([event.body as string]));
+        }
+        return event;
+      })
+    );
+  }*/
 }

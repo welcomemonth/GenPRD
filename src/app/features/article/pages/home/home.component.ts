@@ -18,6 +18,7 @@ import { Clipboard, ClipboardModule } from "@angular/cdk/clipboard";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { MarkdownPipe } from "src/app/shared/pipes/markdown.pipe";
 import { MarkdownComponent, MermaidAPI } from "ngx-markdown";
+import { PrdService } from "../../services/prd.service";
 @Component({
   selector: "app-home-page",
   templateUrl: "./home.component.html",
@@ -86,6 +87,7 @@ graph TD
     private readonly router: Router,
     private readonly clipboard: Clipboard,
     private readonly userService: UserService,
+    private readonly prdService: PrdService,
   ) {}
 
   mermaidMarkdown =
@@ -148,6 +150,16 @@ graph TD;
     this.prdService.create_prd().subscribe({
       next: (response) => {
         console.log('创建成功:', response);
+        
+        const content = response.choices[0].message.content;  // 提取 content 字段
+        console.log(content);
+        if (content) {
+          // 将 content 转换为 Markdown
+          this.markdownContent = content;
+          console.log('Markdown 内容:', this.markdownContent);
+
+          // 你可以将 markdownContent 用于其他操作，例如展示在界面上或保存到文件中
+        }
       },
       error: (error) => {
         console.error('创建失败:', error);
@@ -155,4 +167,5 @@ graph TD;
     });
     console.log("文档生成");
   }
+
 }
