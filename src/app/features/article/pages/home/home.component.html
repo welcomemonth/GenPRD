@@ -6,6 +6,7 @@
       <div>
         <label for="title" class="block text-lg font-semibold mb-2">标题</label>
         <input
+          #title
           id="title"
           type="text"
           class="w-full p-2 border border-gray-300 rounded"
@@ -19,6 +20,7 @@
           >详细描述</label
         >
         <textarea
+          #detail
           id="description"
           class="w-full p-2 border border-gray-300 rounded resize-none"
           placeholder="输入详细描述..."
@@ -48,7 +50,7 @@
         </div>
         <!-- 生成文档按钮 -->
         <button
-          (click)="generateDocument()"
+          (click)="generateDocument(title.value, detail.value)"
           class="mt-4 bg-blue-500 text-white px-4 py-2 rounded"
         >
           生成文档

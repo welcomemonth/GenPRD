@@ -7,14 +7,14 @@ import { HttpClient, HttpEvent, HttpEventType, HttpHeaders } from "@angular/comm
 export class PrdService {
   constructor(private readonly http: HttpClient) {}
 
-  create_prd(): Observable<any> {
+  create_prd(title: string, detail: string): Observable<any> {
     return this.http
       //.post<string>("/prd", { title: "test", detail: "test" })
       .post<any>("/chat", 
         {
           "messages": [
             {
-              "content": "string",
+              "content": detail + "请帮我整理成markdown的格式",
               "role": "user"
             }
           ],

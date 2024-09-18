@@ -3,7 +3,7 @@ import {
   DestroyRef,
   inject,
   OnInit,
-  ElementRef,
+  ElementRef
 } from "@angular/core";
 import { Router } from "@angular/router";
 import { TagsService } from "../../services/tags.service";
@@ -32,11 +32,12 @@ import { PrdService } from "../../services/prd.service";
     RxLet,
     NgForOf,
     IfAuthenticatedDirective,
-    MarkdownPipe,
+    MarkdownPipe
   ],
   standalone: true,
 })
 export default class HomeComponent implements OnInit {
+
   isAuthenticated = false;
   listConfig: ArticleListConfig = {
     type: "all",
@@ -145,9 +146,9 @@ graph TD;
 `;
   }
 
-  generateDocument() {
+  generateDocument(title: string, detail: string) {
     // 调用 create_prd 方法
-    this.prdService.create_prd().subscribe({
+    this.prdService.create_prd(title, detail).subscribe({
       next: (response) => {
         console.log('创建成功:', response);
         
