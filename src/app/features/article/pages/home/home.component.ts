@@ -3,7 +3,7 @@ import {
   DestroyRef,
   inject,
   OnInit,
-  ElementRef,
+  ElementRef
 } from "@angular/core";
 import { Router } from "@angular/router";
 import { TagsService } from "../../services/tags.service";
@@ -32,11 +32,12 @@ import { PrdService } from "../../services/prd.service";
     RxLet,
     NgForOf,
     IfAuthenticatedDirective,
-    MarkdownPipe,
+    MarkdownPipe
   ],
   standalone: true,
 })
 export default class HomeComponent implements OnInit {
+
   isAuthenticated = false;
   listConfig: ArticleListConfig = {
     type: "all",
@@ -145,27 +146,8 @@ graph TD;
 `;
   }
 
-  generateDocument() {
-    // 调用 create_prd 方法
-    this.prdService.create_prd().subscribe({
-      next: (response) => {
-        console.log('创建成功:', response);
-        
-        const content = response.choices[0].message.content;  // 提取 content 字段
-        console.log(content);
-        if (content) {
-          // 将 content 转换为 Markdown
-          this.markdownContent = content;
-          console.log('Markdown 内容:', this.markdownContent);
-
-          // 你可以将 markdownContent 用于其他操作，例如展示在界面上或保存到文件中
-        }
-      },
-      error: (error) => {
-        console.error('创建失败:', error);
-      }
-    });
-    console.log("文档生成");
+  generateDocument(title: string, detail: string) {
+      this.prdService.create_prd();
   }
 
 }
