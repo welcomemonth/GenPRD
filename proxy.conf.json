@@ -1,9 +1,9 @@
 {
   "localurl": "http://192.168.0.104:8001/api",
     "/api": {
-      "target": "https://genprd.meetmonth.top/api",
+      "target": "https://genprd.meetmonth.top",
       "pathRewrite": {
-        "/api": ""
+        "/api": "/api"
       },
       "secure": false,
       "changeOrigin": true,
