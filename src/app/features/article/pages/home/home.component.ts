@@ -39,6 +39,7 @@ import { PrdService } from "../../services/prd.service";
 export default class HomeComponent implements OnInit {
 
   isAuthenticated = false;
+  test_text = "";
   listConfig: ArticleListConfig = {
     type: "all",
     filters: {},
@@ -147,7 +148,14 @@ graph TD;
   }
 
   generateDocument(title: string, detail: string) {
-      this.prdService.create_prd();
+      this.markdownContent = "";
+      this.prdService.create_prd(title, detail).subscribe({
+        next: (content) => {
+          this.markdownContent += content;
+        },
+        error: error => console.error("Error:", error),
+        complete: () => console.log("Stream completed")
+      });
   }
 
 }

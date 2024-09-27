@@ -1,6 +1,9 @@
 {
     "/api": {
-      "target": "https://genprd.meetmonth.top",
+      "target": "http://192.168.0.104:8001/api",
+      "pathRewrite": {
+        "/api": ""
+      },
       "secure": false,
       "changeOrigin": true,
       "logLevel": "debug"
