@@ -11,7 +11,7 @@ export class PrdService {
   create_prd(project_name: string, project_desc: string): Observable<string> {
     const subject = new Subject<string>();
 
-    chatStream("/prd/generate", {
+    chatStream("/api/prd/generate", {
       project_name: project_name,
       project_desc: project_desc
     }).then(({ body, status }) => {

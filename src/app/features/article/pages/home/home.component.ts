@@ -100,8 +100,26 @@ graph TD;
           this.markdownContent += content;
         },
         error: error => console.error("Error:", error),
-        complete: () => console.log("Stream completed")
+        complete: () => {
+          console.log(this.markdownContent);
+          this.markdownContent = this.extractMarkdownCode(this.markdownContent);
+          console.log("Stream completed");
+          console.log(this.markdownContent);
+        }
       });
+  }
+
+  private extractMarkdownCode(content: string): string {
+    const regexMarkdown = /^```markdown\n([\s\S]*?)\n```$/;
+    const regexGeneric = /^```\n([\s\S]*?)\n```$/;
+  
+    let match = content.match(regexMarkdown);
+    if (match) {
+      return match[1];
+    }
+  
+    match = content.match(regexGeneric);
+    return match ? match[1] : content;
   }
 
 }
