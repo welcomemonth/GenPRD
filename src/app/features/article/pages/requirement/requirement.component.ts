@@ -18,10 +18,12 @@ import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { MarkdownPipe } from "src/app/shared/pipes/markdown.pipe";
 import { MarkdownComponent, MermaidAPI } from "ngx-markdown";
 import { PrdService } from "../../services/prd.service";
+
 @Component({
-  selector: "app-home-page",
-  templateUrl: "./home.component.html",
-  styleUrls: ["./home.component.css"],
+  selector: 'app-requirement',
+  standalone: true,
+  templateUrl: './requirement.component.html',
+  styleUrls: ['./requirement.component.css'],
   imports: [
     NgClass,
     ArticleListComponent,
@@ -33,9 +35,8 @@ import { PrdService } from "../../services/prd.service";
     IfAuthenticatedDirective,
     MarkdownPipe
   ],
-  standalone: true,
 })
-export default class HomeComponent implements OnInit {
+export default class RequirementComponent implements OnInit {
 
   isAuthenticated = false;
   destroyRef = inject(DestroyRef);
@@ -102,9 +103,6 @@ graph TD;
         error: error => console.error("Error:", error),
         complete: () => console.log("Stream completed")
       });
-    
-      this.router.navigate(['/requirement']);
-
   }
 
 }

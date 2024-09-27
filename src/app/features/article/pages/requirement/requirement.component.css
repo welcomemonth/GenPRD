@@ -1,0 +1,51 @@
+.home-page {
+    background-color: #f7fafc; /* 背景色 */
+    font-family: Arial, sans-serif; /* 字体样式 */
+  }
+  
+  .flex {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  h3 {
+    font-weight: 600;
+  }
+  
+  .bg-gray-100 {
+    background-color: #f7fafc; /* 浅灰背景色 */
+  }
+  
+  .bg-white {
+    background-color: #ffffff; /* 白色背景 */
+  }
+  
+  .rounded-lg {
+    border-radius: 8px; /* 圆角边框 */
+  }
+  
+  .shadow-md {
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* 阴影效果 */
+  }
+  
+  button {
+    cursor: pointer; /* 鼠标光标样式 */
+  }
+  
+  button:hover {
+    opacity: 0.9; /* 悬停效果 */
+  }
+  
+  .markdown-body {
+    margin-top: 1rem; /* 上边距 */
+  }
+  
+  textarea {
+    min-height: 100px; /* 最小高度 */
+    resize: vertical; /* 允许垂直调整大小 */
+  }
+  
+  textarea:focus {
+    border-color: #3182ce; /* 聚焦时边框颜色 */
+    box-shadow: 0 0 0 1px rgba(49, 130, 206, 0.5); /* 聚焦时阴影 */
+  }
