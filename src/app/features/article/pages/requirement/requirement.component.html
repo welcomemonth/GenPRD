@@ -28,7 +28,7 @@
           <div class="bg-white p-4 rounded-lg shadow-md">
             <h3 class="text-xl font-semibold mb-3">页面结构图</h3>
             <div
-              class="markdown-body"
+              class="markdown-body" 
               [innerHTML]="structure | markdown | async"
             ></div>
           </div>
@@ -36,7 +36,10 @@
           <!-- 系统流程图内容块 -->
           <div class="bg-white p-4 rounded-lg shadow-md">
             <h3 class="text-xl font-semibold mb-3">系统流程图</h3>
-            <markdown [data]="mermaidMarkdown" mermaid [mermaidOptions]="mermaidOptions"></markdown>
+            <div *ngFor="let mermaid of mermaidContent">
+              <markdown [data]="mermaid" mermaid [mermaidOptions]="mermaidOptions"></markdown>
+            </div>
+            
           </div>
   
           <!-- 其他内容块 -->
