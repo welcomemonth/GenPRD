@@ -34,6 +34,7 @@
     "rxjs": "^7.4.0",
     "svg-pan-zoom": "^3.6.1",
     "tslib": "^2.3.0",
+    "vditor": "^3.10.6",
     "zone.js": "~0.14.2"
   },
   "devDependencies": {

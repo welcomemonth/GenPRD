@@ -14,6 +14,10 @@ import { UserService } from "../../../../core/auth/services/user.service";
 import { ListErrorsComponent } from "../../../../shared/components/list-errors.component";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 
+import Vditor from 'vditor';
+import 'vditor/dist/index.css'; // 引入样式
+
+
 interface ArticleForm {
   title: FormControl<string>;
   description: FormControl<string>;
@@ -27,16 +31,8 @@ interface ArticleForm {
   standalone: true,
 })
 export default class EditorComponent implements OnInit {
-  tagList: string[] = [];
-  articleForm: UntypedFormGroup = new FormGroup<ArticleForm>({
-    title: new FormControl("", { nonNullable: true }),
-    description: new FormControl("", { nonNullable: true }),
-    body: new FormControl("", { nonNullable: true }),
-  });
-  tagField = new FormControl<string>("", { nonNullable: true });
-
-  errors: Errors | null = null;
-  isSubmitting = false;
+  vditor: any;
+  isMobile = window.innerWidth < 768;
   destroyRef = inject(DestroyRef);
 
   constructor(
@@ -47,57 +43,34 @@ export default class EditorComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    if (this.route.snapshot.params["slug"]) {
-      combineLatest([
-        this.articleService.get(this.route.snapshot.params["slug"]),
-        this.userService.getCurrentUser(),
-      ])
-        .pipe(takeUntilDestroyed(this.destroyRef))
-        .subscribe(([article, { user }]) => {
-          if (user.username === article.author.username) {
-            this.tagList = article.tagList;
-            this.articleForm.patchValue(article);
-          } else {
-            void this.router.navigate(["/"]);
-          }
-        });
-    }
+    const outline:IOutline = {
+      enable: true,
+      position: 'left',
+    };
+    const mode: "wysiwyg" | "sv" | "ir" = "wysiwyg";
+    const options = {
+      // height: ,
+      tab: '\t',
+      placeholder: '请输入内容...',
+      toolbar: [
+        'headings', '|', 'bold', 'italic', 'strike', '|', 'link', 'image', '|',
+        'list', 'ordered-list', '|', 'check', '|', 'code', 'inline-code', 'quote',
+        '|', 'preview', 'submit'
+      ],
+      mode: mode,
+      outline: outline,
+      comment: {
+        enable: true
+      }
+    };
+    this.vditor = new Vditor('vditor', options);
+    this.vditor.focus();
   }
+}
 
-  addTag() {
-    // retrieve tag control
-    const tag = this.tagField.value;
-    // only add tag if it does not exist yet
-    if (tag != null && tag.trim() !== "" && this.tagList.indexOf(tag) < 0) {
-      this.tagList.push(tag);
-    }
-    // clear the input
-    this.tagField.reset("");
-  }
-
-  removeTag(tagName: string): void {
-    this.tagList = this.tagList.filter((tag) => tag !== tagName);
-  }
-
-  submitForm(): void {
-    this.isSubmitting = true;
-
-    // update any single tag
-    this.addTag();
-
-    // post the changes
-    this.articleService
-      .create({
-        ...this.articleForm.value,
-        tagList: this.tagList,
-      })
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (article) => this.router.navigate(["/article/", article.slug]),
-        error: (err) => {
-          this.errors = err;
-          this.isSubmitting = false;
-        },
-      });
-  }
+interface IOutline {
+  /** 初始化是否展现大纲。默认值: false */
+  enable: boolean;
+  /** 大纲位置：'left', 'right'。默认值: 'left' */
+  position: "left" | "right";
 }
