@@ -9,6 +9,10 @@ export const routes: Routes = [
     loadComponent: () => import("./features/article/pages/home/home.component"),
   },
   {
+    path: "requirement",
+    loadComponent: () => import("./features/article/pages/requirement/requirement.component"),
+  },
+  {
     path: "login",
     loadComponent: () => import("./core/auth/auth.component"),
     canActivate: [

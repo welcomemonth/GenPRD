@@ -91,8 +91,8 @@ graph TD;
 `;
   }
 
-  generateDocument(title: string, detail: string) {
-      this.markdownContent = "";
+  goToRequirementPage(title: string, detail: string) {
+      /*this.markdownContent = "";
       this.prdService.create_prd(title, detail).subscribe({
         next: (content) => {
           this.markdownContent += content;
@@ -102,20 +102,10 @@ graph TD;
           this.markdownContent = this.extractMarkdownCode(this.markdownContent);
           console.log("Stream completed");
         }
-      });
-  }
+      });*/
+    
+      this.router.navigate(['/requirement'], { queryParams: { title: title, detail: detail } });
 
-  private extractMarkdownCode(content: string): string {
-    const regexMarkdown = /^```markdown\n([\s\S]*?)\n```$/;
-    const regexGeneric = /^```\n([\s\S]*?)\n```$/;
-  
-    let match = content.match(regexMarkdown);
-    if (match) {
-      return match[1];
-    }
-  
-    match = content.match(regexGeneric);
-    return match ? match[1] : content;
   }
 
 }
