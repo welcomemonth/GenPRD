@@ -2,11 +2,9 @@ import {
   Component,
   DestroyRef,
   inject,
-  OnInit,
-  ElementRef
+  OnInit
 } from "@angular/core";
 import { Router } from "@angular/router";
-import { ArticleListConfig } from "../../models/article-list-config.model";
 import { AsyncPipe, NgClass, NgForOf } from "@angular/common";
 import { ArticleListComponent } from "../../components/article-list.component";
 import { tap } from "rxjs/operators";
@@ -101,10 +99,8 @@ graph TD;
         },
         error: error => console.error("Error:", error),
         complete: () => {
-          console.log(this.markdownContent);
           this.markdownContent = this.extractMarkdownCode(this.markdownContent);
           console.log("Stream completed");
-          console.log(this.markdownContent);
         }
       });*/
     

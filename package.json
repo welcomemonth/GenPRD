@@ -33,6 +33,7 @@
     "ngx-markdown": "^18.0.0",
     "rxjs": "^7.4.0",
     "svg-pan-zoom": "^3.6.1",
+    "vditor": "^3.10.6",
     "tslib": "^2.7.0",
     "zone.js": "~0.14.2"
   },

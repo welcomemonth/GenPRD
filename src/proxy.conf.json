@@ -1,9 +1,0 @@
-{
-    "/api": {
-      "target": "https://genprd.meetmonth.top",
-      "secure": false,
-      "changeOrigin": true,
-      "logLevel": "debug"
-    }
-  }
-  
