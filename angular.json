@@ -31,7 +31,8 @@
             "styles": [
               "@angular/material/prebuilt-themes/azure-blue.css",
               "node_modules/github-markdown-css/github-markdown.css",
-              "src/styles.css"
+              "src/styles.css",
+              "src/custom-styles.css"
             ],
             "scripts": [
               "node_modules/prismjs/prism.js",
