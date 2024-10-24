@@ -6,6 +6,28 @@
 /* html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; } */
 html {
+    height: 100%;
+    margin: 0;
     /* 底部页面太大了，在main.css中设计的是100px */
     padding-bottom: 0px;
 }
+
+.mermaid{
+    rect{
+        rx: 10;
+        ry: 10;
+    }
+}
+
+body{
+    background-image: linear-gradient(to right top, #ffb500, #ff8a2c, #ff5756, #ff1c82, #f400b1, #c84fdd, #8871f7, #0087ff, #00afff, #00cef8, #00e4b1, #4af257);
+    background-size: cover;
+    background-repeat: no-repeat;
+    padding: 0;
+}
+
+footer {
+    position: static !important;
+  }
+  
+  

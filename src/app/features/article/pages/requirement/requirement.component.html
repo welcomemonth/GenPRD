@@ -1,58 +1,53 @@
 <div class="home-page">
-    <div class="flex h-screen">
-      <!-- 右侧内容区域 -->
-      <div class="w-3/4 bg-gray-100 p-6 overflow-auto">
-        <div class="space-y-6">
-          <!-- PRD内容块 -->
-          <div class="bg-white p-4 rounded-lg shadow-md relative">
-            <button
-              (click)="copyToClipboard(markdownContent)"
-              class="absolute top-4 right-4 bg-blue-500 text-white px-3 py-2 rounded-lg transition hover:bg-blue-600"
-            >
-              复制
-            </button>
-            <button
-              (click)="regenerateContent()"
-              class="absolute top-4 right-16 bg-green-500 text-white px-3 py-2 rounded-lg transition hover:bg-green-600"
-            >
-              重新生成
-            </button>
-            <h3 class="text-xl font-semibold mb-3">PRD内容</h3>
-            <div
-              class="markdown-body"
-              [innerHTML]="markdownContent | markdown | async"
-            ></div>
-          </div>
-  
-          <!-- 页面结构图内容块 -->
-          <div class="bg-white p-4 rounded-lg shadow-md">
-            <h3 class="text-xl font-semibold mb-3">页面结构图</h3>
-            <div
-              class="markdown-body" 
-              [innerHTML]="structure | markdown | async"
-            ></div>
-          </div>
-  
-          <!-- 系统流程图内容块 -->
-          <div class="bg-white p-4 rounded-lg shadow-md">
-            <h3 class="text-xl font-semibold mb-3">系统流程图</h3>
-            <div *ngFor="let mermaid of mermaidContent">
-              <markdown [data]="mermaid" mermaid [mermaidOptions]="mermaidOptions"></markdown>
-            </div>
-            
-          </div>
-  
-          <!-- 其他内容块 -->
-          <div class="bg-white p-4 rounded-lg shadow-md">
-            <h3 class="text-xl font-semibold mb-3">其他内容</h3>
-            <textarea
-              #otherContent
-              class="w-full p-3 border border-gray-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="输入其他内容..."
-            ></textarea>
-          </div>
+  <!-- 左侧内容区域 -->
+  <div class="left-content">
+    <h2>目录</h2>
+    <ul>
+      <li *ngFor="let section of sections; let index=index" [ngClass]="getTitleClass(section.title)">
+        <a href="requirement#section-{{index}}" [ngClass]="{'highlight': currentHighlightedIndex === index}" class="text-blue-500 hover:underline">{{ formatTitle(section.title) }}</a>
+      </li>
+    </ul>
+  </div>
+  <!-- 右侧内容区域 -->
+  <div class="right-content">
+    <div class="space-y-6">
+      <!-- PRD内容块 -->
+      <div class="bg-white p-4 rounded-lg shadow-md relative">
+        <button
+          (click)="copyToClipboard(markdownContent)"
+          class="absolute top-4 right-6 bg-blue-500 text-white px-4 py-2 rounded-lg shadow-md hover:bg-blue-600 transition-transform transform hover:scale-105"
+        >
+          复制
+        </button>
+        <button
+          (click)="regenerateContent()"
+          class="absolute top-4 right-20 bg-green-500 text-white px-4 py-2 rounded-lg shadow-md hover:bg-green-600 transition-transform transform hover:scale-105"
+        >
+          重新生成
+        </button>
+
+        <h3 class="text-xl font-semibold mb-3">PRD内容</h3>
+        <div class="markdown-body" *ngIf="isMarkdownView" [innerHTML]="markdownContent | markdown | async"></div>
+        <div class="html-body" *ngIf="!isMarkdownView" [innerHTML]="safeHtmlContent"></div>
+      </div>
+
+      <!-- 系统流程图内容块 -->
+      <div class="bg-white p-4 rounded-lg shadow-md">
+        <h3 class="text-xl font-semibold mb-3">系统流程图</h3>
+        <div *ngFor="let mermaid of mermaidContent">
+          <markdown [data]="mermaid" mermaid [mermaidOptions]="mermaidOptions"></markdown>
         </div>
+      </div>
+
+      <!-- 其他内容块 -->
+      <div class="bg-white p-4 rounded-lg shadow-md">
+        <h3 class="text-xl font-semibold mb-3">其他内容</h3>
+        <textarea
+          #otherContent
+          class="w-full p-3 border border-gray-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
+          placeholder="输入其他内容..."
+        ></textarea>
       </div>
     </div>
   </div>
-  
+</div>

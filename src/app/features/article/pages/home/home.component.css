@@ -1,7 +1,7 @@
 /* 基础布局和样式 */
 .home-page {
   font-family: 'Arial', sans-serif;
-  background-color: #f8f9fa;
+  background-color: rgba(248, 249, 250, 0.7);
 }
 
 .input-area {

@@ -23,34 +23,9 @@
         ></textarea>
       </div>
 
-      <!-- 勾选选项 -->
-      <div class="checkbox-group">
-        <label>选择内容</label>
-        <div class="checkbox-options">
-          <label class="checkbox-label">
-            <input type="checkbox" value="需求细化" />
-            <span>需求细化</span>
-          </label>
-          <label class="checkbox-label">
-            <input type="checkbox" value="页面结构图" />
-            <span>页面结构图</span>
-          </label>
-          <label class="checkbox-label">
-            <input type="checkbox" value="系统流程图" />
-            <span>系统流程图</span>
-          </label>
-          <label class="checkbox-label">
-            <input type="checkbox" value="其他内容" />
-            <span>其他内容</span>
-          </label>
-        </div>
-      </div>
-
       <!-- 生成文档按钮 -->
-      <button
-        (click)="goToRequirementPage(title.value, detail.value)"
-        class="generate-button"
-      >
+      
+      <button class="z-10 relative button_button__SRc2Y relative items-center justify-center rounded-md transition-all font-medium 2xl:px-6 2xl:py-3.5 px-5 py-3 copy-body button_primaryButton__ipohF bg-blurple text-white overflow-hidden inline-flex whitespace-nowrap" (click)="goToRequirementPage(title.value, detail.value)">
         生成文档
       </button>
     </div>

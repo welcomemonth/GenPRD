@@ -2,8 +2,13 @@ import { Routes } from "@angular/router";
 import { inject } from "@angular/core";
 import { UserService } from "./core/auth/services/user.service";
 import { map } from "rxjs/operators";
+import { MermaidComponent } from "./features/article/pages/mermaid/mermaid.component";
 
 export const routes: Routes = [
+  {
+    path: "mermaid",
+    component: MermaidComponent
+  },
   {
     path: "",
     loadComponent: () => import("./features/article/pages/home/home.component"),
