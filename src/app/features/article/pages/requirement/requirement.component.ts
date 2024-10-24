@@ -104,12 +104,10 @@ flowchart LR
     this.generateDocument(this.title, this.detail);
   }
 
-  // 复制内容到剪贴板
   copyToClipboard(content: string) {
     this.clipboard.copy(content);
   }
 
-  // 重新生成内容（示例方法，可以按需实现）
   regenerateContent() {
     this.generateDocument(this.title, this.detail);
   }
