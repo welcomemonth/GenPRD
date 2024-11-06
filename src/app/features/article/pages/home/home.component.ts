@@ -103,6 +103,8 @@ graph TD;
           console.log("Stream completed");
         }
       });*/
+
+      console.log(title, detail);
     
       this.router.navigate(['/requirement'], { queryParams: { title: title, detail: detail } });
 

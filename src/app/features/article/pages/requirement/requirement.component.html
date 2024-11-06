@@ -1,10 +1,10 @@
 <div class="home-page">
   <!-- 左侧内容区域 -->
   <div class="left-content">
-    <h2>目录</h2>
+    <h3 class="text-xl font-semibold mb-3">目录</h3>
     <ul>
       <li *ngFor="let section of sections; let index=index" [ngClass]="getTitleClass(section.title)">
-        <a href="requirement#section-{{index}}" [ngClass]="{'highlight': currentHighlightedIndex === index}" class="text-blue-500 hover:underline">{{ formatTitle(section.title) }}</a>
+        <a [href]="currentUrl + '#section-' + index" (click)="ifHighlight(index)" [ngClass]="{'highlight': currentHighlightedIndex === index}" class="text-blue-500 hover:underline">{{ formatTitle(section.title) }}</a>
       </li>
     </ul>
   </div>
@@ -28,7 +28,28 @@
 
         <h3 class="text-xl font-semibold mb-3">PRD内容</h3>
         <div class="markdown-body" *ngIf="isMarkdownView" [innerHTML]="markdownContent | markdown | async"></div>
-        <div class="html-body" *ngIf="!isMarkdownView" [innerHTML]="safeHtmlContent"></div>
+        <div *ngIf="!isMarkdownView">
+          <div *ngFor="let section of sections, let i=index" class="section-item">
+            <div class="title">
+              <button (click)="openInput()" class="add-button">+</button>
+              <p [id]="'section-' + i" [innerHTML]="titleHtml(section)" [ngClass]="{'highlight': currentHighlightedIndex === i}" (mouseup)="onTextSelect($event, i, 'title')"></p>
+              <!-- <div *ngIf="isUpdateContent && currentIndex === i" class="updated-text" [innerHTML]="updatedContent"></div> -->
+              <div class="inputBox" *ngIf="showTitleInput && currentIndex === i" [style.top.px]="titleInputTop" [style.left.px]="titleInputLeft" (blur)="hideInput('title')">
+                <input type="text" class="floating-input" placeholder="请输入" #inputRef>
+                <button class="sendInput" (click)="submitInput(inputRef.value)">发送</button>
+              </div>
+            </div>
+            <div class="description">
+              <button class="add-button" *ngIf="section.description">+</button>
+              <p (mouseup)="onTextSelect($event, i, 'description')" *ngIf="!isUpdateContent">{{section.description}}</p>
+              <div (mousedown)="openDialog(i)" *ngIf="isUpdateContent && currentIndex === i" class="updated-text" [innerHTML]="updatedContentHtml"></div>
+              <div class="inputBox" *ngIf="showDescriptionInput && currentIndex === i" [style.top.px]="descriptionInputTop" [style.left.px]="descriptionInputLeft" (blur)="hideInput('description')">
+                <input type="text" class="floating-input" placeholder="请输入" #inputRef>
+                <button class="sendInput" (click)="submitInput(inputRef.value)">发送</button>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
       <!-- 系统流程图内容块 -->

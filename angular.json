@@ -88,7 +88,7 @@
         },
         "serve": {
           "options": {
-            "proxyConfig": "src/proxy.conf.json"
+            "proxyConfig": "proxy.conf.json"
           },
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {

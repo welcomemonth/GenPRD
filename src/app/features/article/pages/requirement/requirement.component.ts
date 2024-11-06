@@ -1,3 +1,4 @@
+import { DialogComponent } from './../dialog/dialog.component';
 import {
   Component,
   DestroyRef,
@@ -5,7 +6,9 @@ import {
   OnInit,
   ElementRef,
   AfterViewInit,
-  ViewChild
+  ViewChild,
+  Renderer2,
+  HostListener
 } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
 import { ArticleListConfig } from "../../models/article-list-config.model";
@@ -22,6 +25,7 @@ import { MarkdownComponent, MermaidAPI } from "ngx-markdown";
 import { PrdService } from "../../services/prd.service";
 import { DocumentSection } from "../../models/document.model";
 import { DomSanitizer, SafeHtml } from "@angular/platform-browser";
+import { MatDialog } from "@angular/material/dialog";
 
 @Component({
   selector: 'app-requirement',
@@ -42,26 +46,45 @@ import { DomSanitizer, SafeHtml } from "@angular/platform-browser";
   ],
 })
 export default class RequirementComponent implements OnInit/*, AfterViewInit*/ {
+  apiResponse = '';
+  updatedContentHtml: any;  //更新后的content，html类型
+  updatedContentString = '';  //更新后的content，string类型
+  isUpdateContent: boolean = false;  //判断是否更新了content
+
+  content = '';  //被选中的内容
+  all_content = '';  //被选中内容所处段落
+
+  // 输入框控制和位置属性
+  showTitleInput = false;
+  showDescriptionInput = false;
+  titleInputTop = 0;
+  titleInputLeft = 0;
+  descriptionInputTop = 0;
+  descriptionInputLeft = 0;
+  currentIndex: number | null = null;
+
+  isInputVisible: boolean = false; // 控制输入框是否可见
+  currentUrl: string | undefined;
 
   currentHighlightedIndex: number | null = null;
 
   isAuthenticated = false;
   destroyRef = inject(DestroyRef);
   markdownContent: string = `
-你好！我是你的AI产品小帮手，我可以帮你撰写一份PRD\n
-请在左侧输入功能名和需求描述，点击生成就可以!
-`;
+    你好！我是你的AI产品小帮手，我可以帮你撰写一份PRD\n
+    请在左侧输入功能名和需求描述，点击生成就可以!
+    `;
   structure = ``;
   mermaidMarkdown =
-`\`\`\`mermaid
-flowchart LR
-    A[登录系统] --> B[学生管理]
-    A --> C[班级管理]
-    A --> D[成绩管理]
-    B --> E[数据同步至服务器]
-    C --> E
-    D --> E
-\`\`\``;
+    `\`\`\`mermaid
+    flowchart LR
+        A[登录系统] --> B[学生管理]
+        A --> C[班级管理]
+        A --> D[成绩管理]
+        B --> E[数据同步至服务器]
+        C --> E
+        D --> E
+    \`\`\``;
   mermaidContent: string[] = [];
   sections: DocumentSection[] = [];
   title = '';
@@ -77,7 +100,9 @@ flowchart LR
     private readonly clipboard: Clipboard,
     private readonly userService: UserService,
     private readonly prdService: PrdService,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
+    private renderer: Renderer2,
+    public dialog: MatDialog
   ) {}
 
   @ViewChild('markdownBody', { static:false }) markdownBody!:ElementRef;
@@ -92,26 +117,12 @@ flowchart LR
       primaryTextColor: '#1E2D4C', // 主文字颜色（白色）
       primaryBorderColor: '#858585', // 主边框颜色（深绿色）
     },
-    
-    /*flowchart: {
-      diagramPadding: 8,
-      htmlLabels: true,
-      curve: 'basis',
-      useMaxWidth: true,
-      nodeSpacing: 50,
-    },
-    sequence: {
-      diagramMarginX: 50,
-      actorMargin: 50,
-      width: 150,
-      height: 65,
-      boxTextMargin: 5,
-    },*/
   };
 
   ngOnInit(): void {
     // 订阅路由参数并获取 title 和 detail
     this.route.queryParams.subscribe(params => {
+      this.currentUrl = this.router.url.split('#')[0];  //获取没有锚点的当前url
       this.title = params['title'] || '一个Angular网站';
       this.detail = params['detail'] || '系统支持学生信息的录入、编辑、和删除，\
       提供用户友好的表单界面。用户可以通过搜索功能快速查询特定学生的信息。\
@@ -135,64 +146,29 @@ flowchart LR
 
     this.generateDocument(this.title, this.detail);
 
-    this.route.fragment.subscribe(fragment => {
-      if (fragment) {
-        const index = parseInt(fragment.replace('section-', ''), 10);
-        this.currentHighlightedIndex = index;
-      }
-    });
   }
 
-  /*ngAfterViewInit(): void {
-      this.replaceContent();
-  }*/
-
   replaceContent(): void {
-    console.log("2、", this.contentRendered);
     if(this.contentRendered) {
-      //const markdownElement = this.markdownBody.nativeElement;
-      const sectionsHtml = this.generateSectionsHtml();
-      //this.markdownContent = sectionsHtml;
-      //markdownElement.innerHTML = sectionsHtml;
-      this.safeHtmlContent = this.sanitizer.bypassSecurityTrustHtml(sectionsHtml);  //将html标记为安全
       this.isMarkdownView = false;
-      console.log("new markdownContent is:",this.markdownContent);
     }
   }
 
-  generateSectionsHtml(): string {
-    let sectionsHtml = '<div class="sections-container">';
-    this.sections.forEach((section, index)=> {
-      let titleHtml = '';
-      let sectionId = `section-${index}`;  //基于索引生成唯一id
-      console.log(sectionId)
+  titleHtml(section: DocumentSection): SafeHtml {
+    let titleHtml: SafeHtml;
 
-      if(section.title.startsWith('###')) {
-        titleHtml = `<h3 id="${sectionId}" [ngClass]="{'highlight': currentHighlightedIndex === index}" style="font-size: 1.5em; font-weight: bold;">${section.title.substring(4).trim()}</h3>`;
-        console.log(titleHtml);
-      }
-      else if(section.title.startsWith('##')) {
-        titleHtml = `<h2 id="${sectionId}" style="font-size: 1.75em; font-weight: bold;">${section.title.substring(3).trim()}</h2>`;
-      }
-      else if(section.title.startsWith('#')) {
-        titleHtml = `<h1 id="${sectionId}" style="font-size: 2em; font-weight: bold;">${section.title.substring(2).trim()}</h1>`;
-      }
-      else {
-        titleHtml = `<h3 id="${sectionId}" style="font-size: 1.5em; font-weight: bold;">${section.title}</h3>`;
-      }
-
-      sectionsHtml += `
-        <div class="section-item">
-          <button class="add-button">+</button>
-          <div>
-            ${titleHtml}
-            <p>${section.description}</p>
-          </div>
-        </div>`;
-    });
-    sectionsHtml += '</div>';
-    console.log("sections生成成功");
-    return sectionsHtml;
+    if(section.title.startsWith('###')) {
+      const html = `<p style="font-size: 1em; font-weight: bold;">${section.title.substring(4).trim()}</p>`;
+      return titleHtml = this.sanitizer.bypassSecurityTrustHtml(html);
+    }
+    else if(section.title.startsWith('##')) {
+      const html = `<p style="font-size: 1.25em; font-weight: bold;">${section.title.substring(3).trim()}</p>`;
+      return titleHtml = this.sanitizer.bypassSecurityTrustHtml(html);
+    }
+    else{
+      const html = `<p style="font-size: 1.5em; font-weight: bold;">${section.title.substring(2).trim()}</p>`;
+      return titleHtml = this.sanitizer.bypassSecurityTrustHtml(html);
+    }
   }
 
   copyToClipboard(content: string) {
@@ -211,18 +187,12 @@ flowchart LR
       },
       error: error => console.error("Error:", error),
       complete: () => {
-        console.log(this.markdownContent);
         this.markdownContent = this.extractMarkdownCode(this.markdownContent);
-        console.log("Stream completed");
-        console.log(this.markdownContent);
+        console.log("Stream completed.",this.markdownContent);
 
         this.contentRendered = true;  //this.markdownContent已渲染完毕
-        console.log("1、",this.contentRendered);
 
         this.sections = this.parseDocument(this.markdownContent); // 直接赋值返回的结果
-        console.log("1、", this.sections);
-        //this.parseDocument(this.markdownContent);
-        console.log("分块content：",this.parseDocument(this.markdownContent))
         this.extractMermaidContent();
         this.replaceContent();
       }
@@ -253,23 +223,17 @@ flowchart LR
 
   parseDocument(markdownContent: string): DocumentSection[] {
     const sections: DocumentSection[] = [];
-    
-    //const regex = /##+ (.*?)(?=\n##|\n*$)/g;
-    //const regex = /##+ (.*?)(?=\r?\n##|\r?\n*$)/g;
+
     const regex = /#+ (.*?)(?=\r?\n|$)/g;
   
     const matches = markdownContent.match(regex);
-    console.log("matches:",matches);
     
     if (matches) {
-      console.log("down");
       for (const match of matches) {
         const title = match.trim();
-        //const description = markdownContent.split(match)[1]?.split(/##+ /)[0].trim() || '';
         // 使用正则表达式 split 内容，但保留换行符分隔
         const splitContent = markdownContent.split(match);
         const description = splitContent[1]?.split(/##+ /)[0]?.trim() || '';  // 捕捉标题下面的内容
-        
         
         sections.push({ title, description });
       }
@@ -282,7 +246,7 @@ flowchart LR
 
   //根据title的级别返回不同的样式类
   getTitleClass(title: string): string {
-    const level = title.match(/^#+/)?.[0].length || 1;  // 获取标题的级别
+    const level = title.match(/^#+/)?.[0].length || 3;  // 获取标题的级别
     return `title-level-${level}`;
   }
 
@@ -290,19 +254,150 @@ flowchart LR
     return title.replace(/#+\s*/, '');  // 移除开头的 '#' 和空格
   }
 
-  navigateToSection(index: number) {
-    // 如果已经在目标位置，避免重复导航
-    if (this.currentHighlightedIndex === index) {
-      return; // 不做任何事情
-    }
-
+  ifHighlight(index: number) {
     this.currentHighlightedIndex = index;
-    this.router.navigate([], { fragment: `section-${index}` });
+  }
 
-    /*const element = document.getElementById(`section-${index}`);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-    }*/
+  openInput() {
+    this.isInputVisible = true;
+  }
+
+  submitInput(userInput: string) {
+    if (userInput.trim()) { // 确保输入不为空
+      console.log("发送中");
+      this.prdService.sendDataToApi(this.content, this.all_content, userInput).subscribe({
+        next: (response: any) => {
+          console.log('The response is:', response);
+          this.apiResponse = response.choices[0].message.content;  //获取response内容
+          console.log("回复内容：",this.apiResponse);
+          this.updateText();
+        },
+        error: (error: any) => {
+          console.log("error:", error);
+        }
+      });
+    }
+    else {
+      alert('请输入有效内容'); // 弹出提示
+    }
+  }
+
+  // 选中文字触发事件
+  onTextSelect(event: MouseEvent, index: number, type: 'title' | 'description') {
+    const selection = window.getSelection();
+    if (selection && selection.toString()) {
+      this.content = selection.toString();  //获取选中的文本
+      console.log("被选中的内容是：",this.content);
+      //获取被选中文本所在的段落
+      if(type === 'title') {
+        this.all_content = this.sections[index].title;
+        console.log("被选中的内容所在段落：",this.all_content);
+      }
+      if(type === 'description') {
+        this.all_content = this.sections[index].description;
+        console.log("被选中的内容所在段落：",this.all_content);
+      }
+
+      const range = selection.getRangeAt(0).getBoundingClientRect();
+      console.log("坐标：",range);
+
+      if (type === 'title') {
+        // 设置 title 的输入框位置和显示状态
+        this.showTitleInput = true;
+        this.showDescriptionInput = false;
+        this.currentIndex = index;
+        this.titleInputTop = range.height + 10;
+      } else if (type === 'description') {
+        // 设置 description 的输入框位置和显示状态
+        this.showDescriptionInput = true;
+        this.showTitleInput = false;
+        this.currentIndex = index;
+        this.descriptionInputTop = range.height + 10;
+      }
+    } else {
+      this.hideInput(type);
+    }
+  }
+
+  // 隐藏输入框
+  hideInput(type: 'title' | 'description') {
+    if (type === 'title') {
+      this.showTitleInput = false;
+      this.currentIndex = null;
+    } else if (type === 'description') {
+      this.showDescriptionInput = false;
+      this.currentIndex = null;
+    }
+  }
+
+  updateText() {
+    this.isUpdateContent = false;  //每次判断前将isUpdateContent重置
+    // 比较并更新文本
+    if (this.apiResponse && this.content) {
+      // 获取每个字符的集合，以便比较
+      const contentChars = this.content.split('');
+      const updatedContentChars = this.apiResponse.split('');
+
+      let updatedContentString = '';  //临时
+      let updatedContent = '';  //临时
+
+      for(let i = 0; i < updatedContentChars.length; i++) {
+        const char = updatedContentChars[i];
+        // 字符在api回复中存在，在原文本中不存在，则为它添加高亮样式
+        if(!contentChars.includes(char)) {
+          updatedContent += `<span style="background: rgba(35, 131, 226, .036); border-bottom: 2px solid rgba(35, 131, 226, .1); padding-bottom: 2px; color: rgba(16, 95, 173, 1);">${char}</span>`;
+          updatedContentString += char;
+        }
+        // 字符在api回复中存在，在原文本中也存在，则保持不变
+        else {
+          updatedContent += char;
+          updatedContentString += char;
+        }
+      }
+
+      let finalContent = '';
+      for (let i = 0; i < contentChars.length; i++) {
+        const char = contentChars[i];
+
+        // 如果这个字符在 updatedContent 中不存在，则为它添加删除线样式
+        if (!updatedContentChars.includes(char)) {
+          finalContent += `<span style="text-decoration: line-through; text-decoration-thickness: 1px; color: rgba(199, 198, 196, 1);">${char}</span>`;
+        } else {
+          finalContent += char;  // 保持原样
+          updatedContentString += char;
+        }
+      }
+
+      // 4. 合并内容：updatedContent 和 finalContent
+      this.updatedContentHtml = this.sanitizer.bypassSecurityTrustHtml(updatedContent + finalContent);  // 结合新的内容并更新
+      this.updatedContentString = updatedContentString;
+      this.isUpdateContent = true;
+    }
+    else {
+      this.updatedContentHtml = this.content;  // 保留选中的文本
+    }
+  }
+
+  openDialog(i: number): void {
+    const dialogRef = this.dialog.open(DialogComponent);
+
+    dialogRef.afterClosed().subscribe({
+      next: (result: any) => {
+        if(result === '保留') {
+          console.log("保留");
+          this.sections[i].description = this.updatedContentString;
+          this.isUpdateContent = false;  //显示更新后的description
+        }
+        else if(result === '放弃') {
+          console.log("放弃");
+          this.isUpdateContent = false;  //显示原来的description
+        }
+        else {
+          console.log("取消");
+        }
+      }
+    })
+
   }
 
 }

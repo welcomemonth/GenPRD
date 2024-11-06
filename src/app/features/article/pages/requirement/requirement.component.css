@@ -1,5 +1,5 @@
 html, body {
-  height: 95%; /* 确保html和body占满整个页面 */
+  height: 100%; /* 确保html和body占满整个页面 */
   margin: 0;    /* 移除默认的外边距 */
 }
 
@@ -21,7 +21,8 @@ html, body {
 
 /* 目录样式 */
 .left-content a {
-  color: #000; /* 默认颜色 */
+  font-family:'YouYuan';
+  color: #000000; /* 默认颜色 */
   transition: color 0.3s, background-color 0.3s; /* 添加过渡效果 */
 }
 
@@ -31,16 +32,104 @@ html, body {
   background-color: rgba(29, 78, 216, 0.1); /* 悬停时背景颜色 */
 }
 
-/* 高亮样式 */
-.highlight {
-  background-color: rgba(29, 78, 216, 0.2); /* 高亮颜色 */
-}
-
-
 .right-content {
   width: 75%; /* 右侧占页面的3/4 */
   background-color: #f0f0f0;
   padding: 20px;
   overflow-y: auto; /* 当内容超出时添加滚动条 */
   max-height: 100%; /* 高度为100% */
+}
+
+::ng-deep .section-item {
+  position: relative;
+  display: flex;
+  flex-direction: column; /* 让每个 section-item 垂直排列 */
+  margin-bottom: 15px;    /* 为每个 section 添加底部间距 */
+}
+
+::ng-deep .title, ::ng-deep .description {
+  position: relative;
+  display: flex;
+  align-items: center;    /* 让按钮和文字垂直居中对齐 */
+}
+
+::ng-deep .add-button {
+  margin-right: 10px;     /* 给按钮与文本之间添加间距 */
+  background-color: transparent;
+  color: lightgray;
+  border: none;
+  cursor: pointer;
+  font-size: 20px;
+  padding: 0;
+}
+
+::ng-deep .add-button:hover {
+  color: gray;            /* 鼠标悬停时按钮颜色变成深灰色 */
+}
+
+::ng-deep .title {
+  margin-bottom: 5px;     /* 为 title 添加一些底部间距 */
+}
+
+::ng-deep .description p {
+  margin: 0;              /* 去掉 <p> 标签的默认外边距 */
+}
+
+/* 高亮样式 */
+.highlight {
+  background-color: rgba(29, 78, 216, 0.2); /* 高亮颜色 */
+}
+
+.title-level-1 {
+  font-size: 1.25em;
+}
+
+.title-level-2 {
+  margin-left: 1em;
+  font-size: 1em;
+}
+
+.title-level-3 {
+  margin-left: 2em;
+  font-size: 0.75em;
+}
+
+.inputBox {
+  display: flex;
+  align-items: center;
+  border-radius: 12px;
+  background: white;
+  box-shadow: rgba(0, 0, 0, 0.07) 0px 16px 24px 0px, rgba(0, 0, 0, 0.1) 0px 2px 6px 0px, rgba(0, 0, 0, 0.1) 0px 0px 1px 0px;
+  padding: 2px 12px;
+  width: 100%;
+  position: absolute;
+  z-index: 1000; /* 提高层级，确保输入框在其他元素之上 */
+}
+
+.floating-input {
+  flex: 1;
+  font-size: 14px;
+  min-height: 42px;
+  padding: 8px;
+  margin-right: 8px;
+  background: white; /* 确保背景色为白色 */
+  border: 1px solid #ccc; /* 添加边框以提高可见性 */
+  border-radius: 4px; /* 添加圆角效果 */
+  opacity: 1; /* 确保不透明 */
+  z-index: 1; /* 确保输入框在最上层 */
+}
+
+.sendInput {
+  flex: 0 0 80px; /* 固定宽度或占用较小空间 */
+  height: 42px; /* 确保按钮和输入框高度一致 */
+  background-color: #007bff; /* 按钮背景色 */
+  color: white; /* 按钮文字颜色 */
+  border: none; /* 去掉默认边框 */
+  border-radius: 4px; /* 按钮圆角效果 */
+  cursor: pointer; /* 鼠标悬停时变成手形 */
+  transition: background-color 0.3s; /* 按钮变色过渡效果 */
+}
+
+.sendInput:hover {
+  background-color: #0056b3; /* 悬停时按钮背景颜色变化 */
 }
